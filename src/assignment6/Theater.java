@@ -1,6 +1,7 @@
 // insert header here
 package assignment6;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Theater {
@@ -128,9 +129,12 @@ public class Theater {
 	private int seatsPerRow;
 	private String show;
 	private int numTicketsSold = 0;
-	private List<Ticket> ticketsSold;
+	private List<Ticket> ticketsSold = new ArrayList<>();
 	public int getNumTicketsLeft() {
 	    return (numRows * seatsPerRow - numTicketsSold);
+    }
+    public String getShow() {
+	    return show;
     }
 
 	public Theater(int numRows, int seatsPerRow, String show) {
@@ -145,15 +149,16 @@ public class Theater {
 	 *
  	 * @return the best seat or null if theater is full
    */
-	public Seat bestAvailableSeat() {
+	public synchronized Seat bestAvailableSeat() {
 		//TODO: Implement this method
         if(numTicketsSold == (numRows * seatsPerRow)) {
             System.out.println("Sorry, we are sold out!");
             return null;
         }
         else {
-            int rowNum = (numTicketsSold / numRows) + 1;
-            int seatNum = seatsPerRow - (numTicketsSold % seatsPerRow) + 1;
+            int rowNum = (numTicketsSold / seatsPerRow) + 1;
+            //int seatNum = seatsPerRow - (numTicketsSold % seatsPerRow) + 1;
+            int seatNum = numTicketsSold - (rowNum - 1) * seatsPerRow + 1;
             return(new Seat(rowNum, seatNum));
         }
 	}
@@ -165,7 +170,7 @@ public class Theater {
    * @param seat a particular seat in the theater
    * @return a ticket or null if a box office failed to reserve the seat
    */
-	public Ticket printTicket(String boxOfficeId, Seat seat, int client) {
+	public synchronized Ticket printTicket(String boxOfficeId, Seat seat, int client) {
 		//TODO: Implement this method
         try {
             Ticket ticket = new Ticket(show, boxOfficeId, seat, client);
@@ -186,7 +191,7 @@ public class Theater {
 	 *
    * @return list of tickets sold
    */
-	public List<Ticket> getTransactionLog() {
+	public synchronized List<Ticket> getTransactionLog() {
 		//TODO: Implement this method
         return ticketsSold;
 	}
