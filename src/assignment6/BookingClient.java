@@ -47,13 +47,28 @@ public class BookingClient {
             //thread.start();
             threads.add(thread);
         }
-        for(int i = 0; i < threads.size(); i++) {
-            threads.get(i).start();
+        synchronized(theater) {
+            for (Thread thread : threads) {
+                thread.start();
+                try {
+                    thread.sleep(50);
+                } catch (Exception e) {
+                    System.out.println("Error in pausing!");
+                }
+            }
+            try {
+                for (Thread thread : threads) {
+                    //thread.start();
+                    thread.join();
+                }
+            } catch (Exception e) {
+                System.out.println("Error in joining!");
+            }
         }
         return threads;
 	}
 
-	static class BoxOffice implements Runnable {
+	/*static class BoxOffice implements Runnable {
 	    private String name;
 	    private int numClients;
 
@@ -70,6 +85,31 @@ public class BookingClient {
                 numClients--;
             }
         }
+    }*/
+
+	class BoxOffice extends Thread {
+	    private String name;
+	    private int numClients;
+
+	    public BoxOffice(String name, int numClients) {
+	        this.name = name;
+	        this.numClients = numClients;
+        }
+
+        @Override
+        public synchronized void run() {
+            while(numClients > 0 && theater.getNumTicketsLeft() >= 0) {
+                Theater.Seat seat = theater.bestAvailableSeat();
+                int client = theater.getTransactionLog().size() + 1;
+                theater.printTicket(name, seat, client);
+                numClients--;
+                try {
+                    Thread.sleep(50);
+                } catch (Exception e) {
+                    System.out.println("Error in run");
+                }
+            }
+        }
     }
 
     public static void main(String args[]) {
@@ -81,11 +121,11 @@ public class BookingClient {
         office.put("BX4", 3);
         Theater theater = new Theater(3, 5, "Ouija");
         BookingClient bookingClient = new BookingClient(office, theater);
-        while(theater.getNumTicketsLeft() > 0) {
+        /*while(theater.getNumTicketsLeft() > 0) {
             Theater.Seat seat = theater.bestAvailableSeat();
             System.out.println(seat);
             theater.printTicket("BX1", seat, theater.getTransactionLog().size() + 1);
-        }
-        //bookingClient.simulate();
+        }*/
+        bookingClient.simulate();
     }
 }

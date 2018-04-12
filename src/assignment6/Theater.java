@@ -149,7 +149,7 @@ public class Theater {
 	 *
  	 * @return the best seat or null if theater is full
    */
-	public synchronized Seat bestAvailableSeat() {
+	public Seat bestAvailableSeat() {
 		//TODO: Implement this method
         if(numTicketsSold == (numRows * seatsPerRow)) {
             System.out.println("Sorry, we are sold out!");
@@ -170,18 +170,19 @@ public class Theater {
    * @param seat a particular seat in the theater
    * @return a ticket or null if a box office failed to reserve the seat
    */
-	public synchronized Ticket printTicket(String boxOfficeId, Seat seat, int client) {
+	public Ticket printTicket(String boxOfficeId, Seat seat, int client) {
 		//TODO: Implement this method
         try {
             Ticket ticket = new Ticket(show, boxOfficeId, seat, client);
-            System.out.println(ticket);
-            Thread.sleep(50);
             ticketsSold.add(ticket);
             numTicketsSold++;
+            System.out.println(ticket);
+            //Thread.sleep(50);
             return ticket;
         }
-        catch(InterruptedException e) {
-            System.out.println("Ticket printing failed!");
+        catch(Exception e) {
+            //System.out.println("Ticket printing failed!");
+            numTicketsSold++;
             return null;
         }
 	}
@@ -191,7 +192,7 @@ public class Theater {
 	 *
    * @return list of tickets sold
    */
-	public synchronized List<Ticket> getTransactionLog() {
+	public List<Ticket> getTransactionLog() {
 		//TODO: Implement this method
         return ticketsSold;
 	}
