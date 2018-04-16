@@ -1,30 +1,19 @@
-// insert header here
+/* BOX OFFICE Theater.java
+ * EE422C Project 6 submission by
+ * Shrey Sachdeva
+ * ss77335
+ * 15455
+ * Slip days used: <0>
+ * Spring 2018
+ */
+
 package assignment6;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Theater {
-    public static void main(String args[]) {
-        Seat s = new Seat(3, 24);
-        System.out.println(s);
-        s = new Seat(27, 190);
-        System.out.println(s);
-        s = new Seat(52, 10);
-        System.out.println(s);
-        s = new Seat(53, 673);
-        System.out.println(s);
-        s = new Seat(77, 5);
-        System.out.println(s);
-        s = new Seat(703, 15);
-        System.out.println(s);
-
-        s = new Seat(4, 104);
-        Ticket t = new Ticket("Ouija", "BX1", s, 4);
-        System.out.println(t.toString());
-    }
-
-	/*
+	/**
 	 * Represents a seat in the theater
 	 * A1, A2, A3, ... B1, B2, B3 ...
 	 */
@@ -32,49 +21,67 @@ public class Theater {
 		private int rowNum;
 		private int seatNum;
 
+        /**
+         * Seat Constructor
+         * @param rowNum is the row number
+         * @param seatNum is the seat number in the row
+         */
 		public Seat(int rowNum, int seatNum) {
 			this.rowNum = rowNum;
 			this.seatNum = seatNum;
 		}
 
+        /**
+         * Returns the seat number
+         * @return the seat number
+         */
 		public int getSeatNum() {
 			return seatNum;
 		}
 
+        /**
+         * Returns the row number
+         * @return the row number
+         */
 		public int getRowNum() {
 			return rowNum;
 		}
 
+        /**
+         * Returns a String representation of the Seat
+         * @return a String representing the seat
+         */
 		@Override
 		public String toString() {
-			// TODO: Implement this method to return the full Seat location ex: A1
             int intValue = rowNum;
             String row = "";
-            /*while(intValue > 26) {
-                int i = (intValue - 1) / 26;
-                row += (char) (i + 'A' - 1);
-                intValue -= (26 * i);
-            }
-            row += ((char) (intValue + 'A' - 1));*/
+            // Convert the row number to its corresponding letter representation
             while(intValue > 0) {
                 int i = (intValue - 1) % 26;
                 row = (char) (i + 'A') + row;
                 intValue = (intValue - 1) / 26;
             }
-            //Integer i = seatNum;
+            // Append the seat number
             return(row + seatNum);
 		}
 	}
 
-  /*
-	 * Represents a ticket purchased by a client
-	 */
+    /**
+     * Represents a ticket purchased by a client
+     */
 	static class Ticket {
 		private String show;
 		private String boxOfficeId;
 		private Seat seat;
 		private int client;
 
+        /**
+         * Ticket Constructor
+         * @param show is the show name
+         * @param boxOfficeId is the box office issuing the ticket
+         * @param seat is the seat being sold
+         * @param client is the client number
+         */
 		public Ticket(String show, String boxOfficeId, Seat seat, int client) {
 			this.show = show;
 			this.boxOfficeId = boxOfficeId;
@@ -82,25 +89,44 @@ public class Theater {
 			this.client = client;
 		}
 
+        /**
+         * Returns the Seat
+         * @return the Seat
+         */
 		public Seat getSeat() {
 			return seat;
 		}
 
+        /**
+         * Returns the show
+         * @return the show
+         */
 		public String getShow() {
 			return show;
 		}
 
+        /**
+         * Returns the box office ID
+         * @return the box office ID
+         */
 		public String getBoxOfficeId() {
 			return boxOfficeId;
 		}
 
+        /**
+         * Returns the client number
+         * @return the client number
+         */
 		public int getClient() {
 			return client;
 		}
 
+        /**
+         * Returns a String representation of the Ticket
+         * @return the String representation
+         */
 		@Override
 		public String toString() {
-			// TODO: Implement this method to return a string that resembles a ticket
 			String ticket = "-------------------------------\n";
 			String s = "| Show: " + show;
 			ticket = ticket + addPipe(s);
@@ -114,6 +140,11 @@ public class Theater {
 			return ticket;
 		}
 
+        /**
+         * Adds a pipe aligned with the end of the ticket
+         * @param s is the String without the pipe
+         * @return the String with the pipe
+         */
 		private String addPipe(String s) {
 		    int padding  = 30 - s.length();
 		    for(int i = 0; i < padding; i++) {
@@ -124,76 +155,89 @@ public class Theater {
         }
 	}
 
-	// I added these. ok??
 	private int numRows;
 	private int seatsPerRow;
 	private String show;
 	private int numTicketsSold = 0;
 	private List<Ticket> ticketsSold = new ArrayList<>();
+	private boolean soldOut = false;
+
+    /**
+     * Returns the remaining number of tickets
+     * @return the number of tickets remaining
+     */
 	public int getNumTicketsLeft() {
 	    return (numRows * seatsPerRow - numTicketsSold);
     }
+
+    /**
+     * Returns the show
+     * @return the show
+     */
     public String getShow() {
 	    return show;
     }
 
+    /**
+     * Theater Constructor
+     * @param numRows is the number of rows in the theater
+     * @param seatsPerRow is the number of seats per row
+     * @param show is the name of the show
+     */
 	public Theater(int numRows, int seatsPerRow, String show) {
-		// TODO: Implement this constructor
         this.numRows = numRows;
         this.seatsPerRow = seatsPerRow;
         this.show = show;
 	}
 
-	/*
-	 * Calculates the best seat not yet reserved
-	 *
- 	 * @return the best seat or null if theater is full
-   */
+    /**
+     * Calculates the best seat not yet reserved
+     * @return the best seat or null if theater is full
+     */
 	public Seat bestAvailableSeat() {
-		//TODO: Implement this method
+	    // Determine if there are tickets remaining
         if(numTicketsSold == (numRows * seatsPerRow)) {
-            System.out.println("Sorry, we are sold out!");
+            if(!soldOut) {
+                soldOut = true;
+                System.out.println("Sorry, we are sold out!");
+            }
             return null;
         }
+        // Determine the next best seat
         else {
             int rowNum = (numTicketsSold / seatsPerRow) + 1;
-            //int seatNum = seatsPerRow - (numTicketsSold % seatsPerRow) + 1;
             int seatNum = numTicketsSold - (rowNum - 1) * seatsPerRow + 1;
             return(new Seat(rowNum, seatNum));
         }
 	}
 
-	/*
-	 * Prints a ticket for the client after they reserve a seat
-   * Also prints the ticket to the console
-	 *
-   * @param seat a particular seat in the theater
-   * @return a ticket or null if a box office failed to reserve the seat
-   */
+    /**
+     * Prints a ticket for the client after they reserve a seat (also prints to the console)
+     * @param boxOfficeId if the box office ID
+     * @param seat is a particular seat in the theater
+     * @param client is the client number
+     * @return a ticket or null if a box office failed to reserve the seat
+     */
 	public Ticket printTicket(String boxOfficeId, Seat seat, int client) {
-		//TODO: Implement this method
-        try {
+		try {
+		    // Create and print the ticket
             Ticket ticket = new Ticket(show, boxOfficeId, seat, client);
             ticketsSold.add(ticket);
             numTicketsSold++;
             System.out.println(ticket);
-            //Thread.sleep(50);
+            Thread.sleep(50);
             return ticket;
-        }
-        catch(Exception e) {
-            //System.out.println("Ticket printing failed!");
-            numTicketsSold++;
-            return null;
+        } catch (Exception e) {
+		    numTicketsSold++;
+		    return null;
         }
 	}
 
-	/*
-	 * Lists all tickets sold for this theater in order of purchase
-	 *
-   * @return list of tickets sold
-   */
+    /**
+     * Lists all tickets sold for this theater in order of purchase
+     * @return a list of tickets sold
+     */
 	public List<Ticket> getTransactionLog() {
-		//TODO: Implement this method
         return ticketsSold;
 	}
 }
